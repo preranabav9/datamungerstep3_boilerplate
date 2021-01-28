@@ -1,16 +1,21 @@
 package com.stackroute.datamunger.reader;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import com.stackroute.datamunger.query.DataTypeDefinitions;
 import com.stackroute.datamunger.query.Header;
 
 public class CsvQueryProcessor extends QueryProcessingEngine {
+	String fileName;
+	BufferedReader br = null;
 
 	// Parameterized constructor to initialize filename
 	public CsvQueryProcessor(String fileName) throws FileNotFoundException {
-
+		this.fileName = fileName;
+		br = new BufferedReader(new FileReader(fileName));
 	}
 
 	/*
@@ -21,11 +26,18 @@ public class CsvQueryProcessor extends QueryProcessingEngine {
 	
 	@Override
 	public Header getHeader() throws IOException {
-
-		// read the first line
-
-		// populate the header object with the String array containing the header names
-		return null;
+		Header Head = null;
+		// br = new BufferedReader(new FileReader(fileName));
+		br.mark(1);
+		String header = br.readLine();
+		String[] head = header.split(",");
+		// br.close();
+		br.reset();
+		// for (String col : head) {
+		// System.out.println(col);
+		// }
+		Head = new Header(head);
+		return Head;
 	}
 
 	/**
@@ -50,6 +62,42 @@ public class CsvQueryProcessor extends QueryProcessingEngine {
 	@Override
 	public DataTypeDefinitions getColumnType() throws IOException {
 
-		return null;
+		Object obj;
+		int i = 0;
+		String type = "";
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		String headerRow = br.readLine();
+		String headerArgs[] = headerRow.split(",");
+		String secondRow = br.readLine();
+		secondRow += " ,";
+		String[] dataElements = secondRow.split(",");
+		String[] dataTypes = new String[headerArgs.length];
+		if (dataElements != null) {
+			for (i = 0; i < dataElements.length; i++) {
+
+				try {
+					obj = Integer.parseInt(dataElements[i]);
+					if (obj instanceof Integer)
+
+						type = obj.getClass().getName();
+					dataTypes[i] = type;
+				} catch (NumberFormatException e) {
+
+					try {
+						obj = Double.parseDouble(dataElements[i]);
+						if (obj instanceof Double) {
+							type = obj.getClass().getName();
+							dataTypes[i] = type;
+						}
+					} catch (Exception e2) {
+						obj = dataElements[i];
+						if (obj instanceof String)
+							type = obj.getClass().getName();
+						dataTypes[i] = type;
+					}}
 	}
 }
+		br.close();
+		DataTypeDefinitions types = new DataTypeDefinitions(dataTypes);
+		return types;
+	}}

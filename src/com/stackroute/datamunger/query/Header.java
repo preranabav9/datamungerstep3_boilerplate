@@ -1,14 +1,17 @@
 package com.stackroute.datamunger.query;
 
 public class Header {
+	String[] header;
+	public Header(String[] header) {
+		this.header = header;
+	}
 
-	/*
-	 * This class should contain a member variable which is a String array, to hold
-	 * the headers.
-	 */
-	
 	public String[] getHeaders() {
-		return null;
+
+		return header;
+	}
+	public void setHeaders(String[] header) {
+		this.header = header;
 	}
 
 }
